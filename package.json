@@ -1,7 +1,7 @@
 {
-  "name": "MyMonitor",
-  "version": "0.0.1",
-  "description": "a monitor tool",
+  "name": "Expressnode",
+  "version": "1.0.1",
+  "description": "A Simpler seutp for MEAN applications with customisable NoSQL storage",
   "main": "server.js",
   "repository": "",
   "author": "Chris Zioutas",
