@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en" ng-app="ExpressNode">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Twitter-io Live">
+    <meta name="author" content="Chris Zioutas">
+    <title>ExpressNode</title>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/main.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="javascript/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="javascript/jquery-dateFormat.min.js"></script>
+
+    <script src="javascript/core.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
+</head>
+
+<body ng-app="PressPublic" ng-controller="mainController">
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default ">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><i class=""></i></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar">
+                    <li>
+                        <a class="navbar-brand pointer" id="nav-Brand">ExpressNode</a>
+                    </li>
+                      <% if( typeof user == 'undefined') { %>
+                        <li>
+                          <a class="pointer" id="nav-Register">Register</a>
+                        </li>
+                      <% } %>
+                    <li>
+                      <% if( typeof user == 'undefined') { %>
+                        <a class="pointer" id="nav-Login">Login</a>
+                      <% } else  {%>
+                        <a href="/logout" class="pointer" id="nav-Logout">Logout</a>
+                      <% } %>
+                    </li>
+                    <li>
+                      <a class="pointer" id="nav-New-Widget">New Widget</a>
+                    </li>
+                    <li>
+                      <a class="pointer" id="nav-Acknowledgement"><span class="label label-info">{{ acknowledgement.message }}</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="AboutPanel" class="green">
+    </div>
+    <div id="NewWidgetPanel" style="display:none;">
+        <div class="container well centered">
+          <form class="widget-create" name="widgetCreateFormData" ng-submit="postWidget()" novalidate>
+            <input type="name" class="form-control" placeholder="Name" name="Name" ng-model="widgetCreateFormData.Name" required/>
+            <input type="sql" class="form-control" placeholder="Sql" name="Sql" ng-model="widgetCreateFormData.Sql" required/>
+            <br /><br />
+            <button class="btn btn-info btn-primary" ng-disabled="widgetCreateFormData.$invalid">Create</button>
+          </form>
+        </div>
+    </div>
+
+    <div id="LoginPanel" style="display:none;">
+        <div class="container well centered">
+          <form class="form-signin" name="loginUserForm" method="post" action="/login" data-name="login Form" enctype="application/x-www-form-urlencoded">
+            <input type="email" class="form-control" style="width:300px; display:inline;" placeholder="Email Address" name="Email" ng-model="loginUserFormData.Email" required/>
+                <input type="password" class="form-control" style="width:300px; display:inline;" placeholder="Password" name="Password" ng-model="loginUserFormData.Password" required/>
+                <br /><br />
+                <button class="btn btn-info btn-primary" ng-disabled="loginUserFormData.$invalid">Log In</button>
+            </form>
+            <hr />
+            <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+            <a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
+            <input type="button" class="btn btn-info btn-xs" disabled value="LinkedIn" />
+            <input type="button" class="btn btn-info btn-xs" disabled value="GooglePlus" />
+        </div>
+    </div>
+    <div id="RegisterPanel" style="display:none;">
+        <div class="container well">
+            <h4 class="" id="FullReg"><a>Full Details Profile Registration</a></h4>
+            <form name="namedUserForm" ng-submit="registerNamed(namedUserForm.$valid)" novalidate>
+                <div class="Registration">
+
+                    <input type="text" class="form-control" style="width:200px; display:inline;" placeholder="First Name" name="FN" ng-model="namedUserFormData.FN" ng-maxlength="20" ng-minlength="2" required />
+                    <h5 ng-show="namedUserForm.FN.$error.minlength" class="help-block red">First Name is too short.</h5>
+                    <h5 ng-show="namedUserForm.FN.$error.maxlength" class="help-block red">First Name is too long.</h5>
+                    <h5 ng-show="!namedUserForm.FN.$pristine && namedUserForm.FN.$error.required" class="help-block red">First name is required.</h5>
+
+                    <input type="text" class="form-control" style="width:200px; display:inline;" placeholder="Last Name" name="LN" ng-model="namedUserFormData.LN" ng-maxlength="20" ng-minlength="2" required />
+                    <h5 ng-show="namedUserForm.LN.$error.maxlength" class="help-block red">Last Name is too short.</h5>
+                    <h5 ng-show="namedUserForm.LN.$error.maxlength" class="help-block red">Last Name is too long.</h5>
+                    <h5 ng-show="!namedUserForm.LN.$pristine && namedUserForm.LN.$error.required" class="help-block red">First name is required.</h5>
+                      <br />
+                      <br />
+
+                    <input type="email" class="form-control" style="width:200px; display:block;" placeholder="Email Address" name="Email" ng-model="namedUserFormData.Email" required/>
+                    <h5 ng-show="namedUserForm.Email.$invalid && !namedUserForm.Email.$pristine && namedUserForm.FN.$error.required" class="help-block red">Enter a valid email.</h5>
+                      <br />
+
+                    <input type="password" class="form-control" style="width:200px; display:inline; " placeholder="Password" name="Password" ng-model="namedUserFormData.Password" required ng-minlength="8"/>
+                    <h5 ng-show="!namedUserForm.Password.$pristine && namedUserForm.Password.$error.required " class="help-block red">Password required!</h5>
+                    <h5 ng-show="namedUserForm.Password.$error.minlength && !namedUserForm.Password.$pristine" class="help-block red">Password length must be over 8 chars!</h5>
+
+                    <input type="password" class="form-control" style="width:200px; display:inline-block;" placeholder="Re-Type Password" ng-model="namedUserForm.Password2" name="Password2" required data-password-verify="namedUserForm.Password"/>
+                    <h5 ng-show="!namedUserForm.Password2.$pristine && namedUserForm.Password2.$error.required" class="help-block red">ReType Password!</h5>
+                    <h5 ng-show="namedUserForm.Password2.$error.passwordVerify && !namedUserForm.Password2.$pristine" class="help-block red">Passwords do not match!</h5>
+                    <br />
+                    <br />
+                    <textarea class="form-control" placeholder="Encryption Key" name="key" ng-model="namedUserForm.key" ng-maxlength="500"></textarea>
+                    <h5 ng-show="namedUserForm.key.$error.maxlength" class="help-block red">Too many characters. Limit 500.</h5>
+                      <br />
+                    <button class="btn btn-info btn-xs" ng-disabled="namedUserForm.$invalid">Register</button>
+                </div>
+            </form>
+            <h4><a class="" id="SocialReg">Social Media Registration</a></h4>
+            <div class="SocialMediaRegistration" >
+                <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+                <a href="/auth/twitter" class="btn btn-info"><span class="fa fa-twitter"></span> Twitter</a>
+                <input type="button" class="btn btn-info btn-xs" disabled value="LinkedIn" />
+                <input type="button" class="btn btn-info btn-xs" disabled value="GooglePlus" />
+            </div>
+        </div>
+    </div>
+    <div class="container MainContext">
+    </div>
+    <div id="f">
+        <div class="container">
+            <div class="row">
+            </div>
+        </div>
+    </div>
+    <div id="Footer" style="background-color:orange;">
+        <div class="container">
+
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript==================================================- ->
+     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="javascript/bootstrap.js"></script>
+    <script src="javascript/index.js"></script>
+</body>
+</html>
